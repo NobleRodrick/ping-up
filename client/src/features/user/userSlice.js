@@ -7,10 +7,16 @@ const initialState = {
 }
 
 export const fetchUser = createAsyncThunk('user/fetchUser', async (token) => {
-    const {data} = await api.get('/api/user/data', {
-        headers: {Authorization: `Bearer ${token}`}
-    })
-    return data.success ? data.user : null
+    try {
+        const {data} = await api.get('/api/user/data', {
+            headers: {Authorization: `Bearer ${token}`}
+        });
+        console.log('fetchUser API response:', data);
+        return data.success ? data.user : null;
+    } catch (error) {
+        console.error('fetchUser API error:', error);
+        return null;
+    }
 })
 
 export const updateUser = createAsyncThunk('user/update', async ({userData, token})=>{
@@ -34,9 +40,10 @@ const userSlice = createSlice({
     },
     extraReducers: (builder)=>{
         builder.addCase(fetchUser.fulfilled, (state, action)=>{
-            state.value = action.payload
+            console.log('Redux fetchUser.fulfilled payload:', action.payload);
+            state.value = action.payload;
         }).addCase(updateUser.fulfilled, (state, action)=>{
-            state.value = action.payload
+            state.value = action.payload;
         } )
     }
 })
