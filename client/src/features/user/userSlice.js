@@ -33,9 +33,9 @@ const userSlice = createSlice({
 
     },
     extraReducers: (builder)=>{
-        builder.addCase(fetchUser.fullfulled, (state, action)=>{
+        builder.addCase(fetchUser.fulfilled, (state, action)=>{
             state.value = action.payload
-        }).addCase(updateUser.fullfilled, (state, action)=>{
+        }).addCase(updateUser.fulfilled, (state, action)=>{
             state.value = action.payload
         } )
     }
