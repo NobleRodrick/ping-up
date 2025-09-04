@@ -2,37 +2,34 @@ import { BadgeCheck, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const StoryViewer = ({ viewStory, setViewStory }) => {
+  const [progress, setProgress] = useState(0);
 
-    const [progress, setProgress] = useState(0)
+  useEffect(() => {
+    let timer, progressInterval;
 
-    useEffect(() => {
-        let timer, progressInterval;
+    if (viewStory && viewStory.media_type !== "video") {
+      setProgress(0);
 
-        if(viewStory && viewStory.media_type !== 'video'){
-            setProgress(0)
+      const duration = 10000;
+      const setTime = 100;
+      let elapsed = 0;
 
-            const duration = 10000;
-            const setTime = 100
-            let elapsed = 0;
+      progressInterval = setInterval(() => {
+        elapsed += setTime;
+        setProgress((elapsed / duration) * 100);
+      }, setTime);
 
-            progressInterval = setInterval(() => {
-                elapsed += setTime;
-                setProgress((elapsed / duration) * 100);
+      // Close story after duration(10sec)
+      timer = setTimeout(() => {
+        setViewStory(null);
+      }, duration);
+    }
 
-            }, setTime)
-
-            // Close story after duration(10sec)
-            timer = setTimeout(()=>{
-                setViewStory(null)
-            }, duration)
-        }
-
-        return ()=>{
-            clearTimeout(timer)
-            clearInterval(progressInterval)
-        }
-
-    }, [viewStory, setViewStory])
+    return () => {
+      clearTimeout(timer);
+      clearInterval(progressInterval);
+    };
+  }, [viewStory, setViewStory]);
 
   const handleClose = () => {
     setViewStory(null);
@@ -42,25 +39,35 @@ const StoryViewer = ({ viewStory, setViewStory }) => {
 
   const renderContent = () => {
     switch (viewStory.media_type) {
-        case 'image':
-            return (
-                <img src={viewStory.media_url} alt="" className="max-w-full max-h-screen object-contain" />
-            );
-        case 'video':
-            return (
-                <video onEnded={()=>setViewStory(null)} src={viewStory.media_url} className="max-h-screen" controls autoPlay />
-            );
-        case 'text':
-            return (
-                <div className="w-full h-full flex items-center justify-center p-8 text-white text-2xl text-center">
-                    {viewStory.content}
-                </div>
-            );
-    
-        default:
-            return null;
+      case "image":
+        return (
+          <img
+            src={viewStory.media_url}
+            alt=""
+            className="max-w-full max-h-screen object-contain"
+          />
+        );
+      case "video":
+        return (
+          <video
+            onEnded={() => setViewStory(null)}
+            src={viewStory.media_url}
+            className="max-h-screen"
+            controls
+            autoPlay
+          />
+        );
+      case "text":
+        return (
+          <div className="w-full h-full flex items-center justify-center p-8 text-white text-2xl text-center">
+            {viewStory.content}
+          </div>
+        );
+
+      default:
+        return null;
     }
-  }
+  };
 
   return (
     <div
